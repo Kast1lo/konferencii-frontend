@@ -1,0 +1,77 @@
+<div class="navbar">
+  <span class="navbar-title">Конференции.РФ — Администратор</span>
+  <p-button label="Выйти" severity="secondary" icon="pi pi-sign-out" (click)="logout()" />
+</div>
+
+<div class="page-content">
+  <h1 class="page-title">Все заявки</h1>
+
+  <!-- Фильтры и сортировка -->
+  <div class="admin-filters">
+    <p-select
+      [options]="statusOptions"
+      [(ngModel)]="filterStatus"
+      optionLabel="label"
+      optionValue="value"
+      (onChange)="applyFilters()"
+      placeholder="Фильтр по статусу"
+    />
+    <p-select
+      [options]="roomOptions"
+      [(ngModel)]="filterRoom"
+      optionLabel="label"
+      optionValue="value"
+      (onChange)="applyFilters()"
+      placeholder="Фильтр по помещению"
+    />
+    <p-button
+      [label]="'Дата ' + (sortDir === 'asc' ? '↑' : '↓')"
+      severity="secondary"
+      icon="pi pi-sort"
+      (click)="toggleSort()"
+    />
+    <span class="filter-count">Найдено: {{ filtered.length }}</span>
+  </div>
+
+  @if (paginated.length === 0) {
+    <div class="app-card">
+      <p style="text-align:center; color:#666;">Заявок не найдено</p>
+    </div>
+  }
+
+  @for (app of paginated; track app.id) {
+    <div class="app-card">
+      <div class="app-card-header">
+        <span class="app-course-name">{{ roomLabels[app.room_type] }}</span>
+        <span class="app-status app-status--{{ app.status }}">{{ statusLabels[app.status] }}</span>
+      </div>
+      <div class="app-card-body">
+        <p>Пользователь: <strong>{{ app.full_name }}</strong> ({{ app.login }})</p>
+        <p>Email: <strong>{{ app.email }}</strong></p>
+        <p>Телефон: <strong>{{ app.phone }}</strong></p>
+        <p>Дата конференции: <strong>{{ app.conference_date | slice:0:10 }}</strong></p>
+        <p>Оплата: <strong>{{ paymentLabels[app.payment_method] }}</strong></p>
+        <p class="app-created">Создана: {{ app.created_at | slice:0:10 }}</p>
+      </div>
+      <div class="admin-status-row">
+        <label>Изменить статус:</label>
+        <p-select
+          [options]="changeOptions"
+          [(ngModel)]="app.status"
+          optionLabel="label"
+          optionValue="value"
+          (onChange)="changeStatus(app, app.status)"
+        />
+      </div>
+    </div>
+  }
+
+  <!-- Пагинация -->
+  @if (totalPages > 1) {
+    <div class="pagination">
+      <p-button icon="pi pi-chevron-left" severity="secondary" [disabled]="page === 1" (click)="prevPage()" />
+      <span class="pagination-info">{{ page }} / {{ totalPages }}</span>
+      <p-button icon="pi pi-chevron-right" severity="secondary" [disabled]="page === totalPages" (click)="nextPage()" />
+    </div>
+  }
+</div>

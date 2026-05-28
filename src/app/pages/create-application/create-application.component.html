@@ -1,0 +1,58 @@
+<div class="auth-wrapper">
+  <div class="auth-card" style="max-width:480px">
+    <h2>Новая заявка на бронирование</h2>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <div class="form-group">
+        <label>Помещение</label>
+        <p-select
+          formControlName="room_type"
+          [options]="roomOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Выберите помещение"
+          styleClass="w-full"
+        />
+        @if (form.get('room_type')?.invalid && form.get('room_type')?.touched) {
+          <span class="form-error">Выберите помещение</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Дата начала конференции</label>
+        <p-datepicker
+          formControlName="conference_date"
+          dateFormat="dd.mm.yy"
+          [showIcon]="true"
+          placeholder="Выберите дату"
+          styleClass="w-full"
+        />
+        @if (form.get('conference_date')?.invalid && form.get('conference_date')?.touched) {
+          <span class="form-error">Укажите дату</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Способ оплаты</label>
+        <p-select
+          formControlName="payment_method"
+          [options]="paymentOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Выберите способ оплаты"
+          styleClass="w-full"
+        />
+        @if (form.get('payment_method')?.invalid && form.get('payment_method')?.touched) {
+          <span class="form-error">Выберите способ оплаты</span>
+        }
+      </div>
+
+      <div class="btn-row">
+        <p-button label="Отмена" severity="secondary" type="button" routerLink="/applications" styleClass="btn-half" />
+        <p-button label="Отправить" type="submit" [loading]="loading" styleClass="btn-half" />
+      </div>
+
+    </form>
+  </div>
+</div>

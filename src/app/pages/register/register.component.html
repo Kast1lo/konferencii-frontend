@@ -1,0 +1,57 @@
+<div class="auth-wrapper">
+  <div class="auth-card" style="max-width:480px">
+    <h2>Регистрация</h2>
+
+    @if (error) {
+      <div class="form-error-box">{{ error }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label>Логин <small>(латиница и цифры, от 6 символов)</small></label>
+        <input pInputText formControlName="login" placeholder="mylogin123" />
+        @if (form.get('login')?.invalid && form.get('login')?.touched) {
+          <span class="form-error">Только латиница и цифры, минимум 6 символов</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Пароль <small>(минимум 8 символов)</small></label>
+        <input pInputText type="password" formControlName="password" placeholder="Минимум 8 символов" />
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <span class="form-error">Минимум 8 символов</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>ФИО <small>(кириллица и пробелы)</small></label>
+        <input pInputText formControlName="full_name" placeholder="Иванов Иван Иванович" />
+        @if (form.get('full_name')?.invalid && form.get('full_name')?.touched) {
+          <span class="form-error">Только кириллица и пробелы</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Телефон <small>(формат: 8(XXX)XXX-XX-XX)</small></label>
+        <input pInputText formControlName="phone" placeholder="8(999)123-45-67" />
+        @if (form.get('phone')?.invalid && form.get('phone')?.touched) {
+          <span class="form-error">Формат: 8(XXX)XXX-XX-XX</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input pInputText type="email" formControlName="email" placeholder="example@mail.ru" />
+        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+          <span class="form-error">Введите корректный email</span>
+        }
+      </div>
+
+      <p-button type="submit" label="Зарегистрироваться" [loading]="loading" styleClass="btn-full" />
+
+      <div class="auth-link">
+        <a routerLink="/login">Уже есть аккаунт? Войти</a>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="navbar">
+  <span class="navbar-title">Конференции.РФ</span>
+  <div class="flex gap-2">
+    <p-button label="Новая заявка" icon="pi pi-plus" routerLink="/applications/new" />
+    <p-button label="Выйти" severity="secondary" icon="pi pi-sign-out" (click)="logout()" />
+  </div>
+</div>
+
+<!-- Слайдер -->
+<div class="slider">
+  <button class="slider-btn slider-btn--prev" (click)="prevSlide()">&#8249;</button>
+  <div class="slider-track">
+    @for (slide of slides; track $index) {
+      <div class="slide" [class.slide--active]="$index === currentSlide" [style.background]="slide.bg">
+        <div class="slide-content">
+          <h3>{{ slide.title }}</h3>
+          <p>{{ slide.desc }}</p>
+        </div>
+      </div>
+    }
+  </div>
+  <button class="slider-btn slider-btn--next" (click)="nextSlide()">&#8250;</button>
+  <div class="slider-dots">
+    @for (slide of slides; track $index) {
+      <span class="slider-dot" [class.slider-dot--active]="$index === currentSlide" (click)="currentSlide = $index"></span>
+    }
+  </div>
+</div>
+
+<div class="page-content">
+  <h1 class="page-title">Мои заявки</h1>
+
+  @if (applications.length === 0) {
+    <div class="app-card">
+      <p style="text-align:center; color:#666;">У вас пока нет заявок. Нажмите «Новая заявка».</p>
+    </div>
+  }
+
+  @for (app of applications; track app.id) {
+    <div class="app-card">
+      <div class="app-card-header">
+        <span class="app-course-name">{{ roomLabels[app.room_type] }}</span>
+        <span class="app-status app-status--{{ app.status }}">{{ statusLabels[app.status] }}</span>
+      </div>
+      <div class="app-card-body">
+        <p>Дата конференции: <strong>{{ app.conference_date | slice:0:10 }}</strong></p>
+        <p>Оплата: <strong>{{ paymentLabels[app.payment_method] }}</strong></p>
+        <p class="app-created">Создана: {{ app.created_at | slice:0:10 }}</p>
+      </div>
+
+      @if (app.review_text) {
+        <div class="review-box">
+          <strong>Ваш отзыв:</strong> {{ app.review_text }}
+        </div>
+      } @else if (canLeaveReview(app)) {
+        <p-button
+          label="Оставить отзыв"
+          severity="secondary"
+          size="small"
+          icon="pi pi-comment"
+          (click)="openReviewDialog(app.id)"
+        />
+      } @else if (app.status === 'new') {
+        <small style="color:#94a3b8">Отзыв доступен после обработки заявки администратором</small>
+      }
+    </div>
+  }
+</div>
+
+<p-dialog header="Оставить отзыв" [(visible)]="reviewDialogVisible" [modal]="true" [style]="{width: '450px'}">
+  <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="flex flex-col gap-3">
+    <textarea pTextarea formControlName="review_text" rows="4"
+      placeholder="Напишите ваш отзыв о помещении и организации мероприятия..."
+      class="w-full"></textarea>
+    @if (reviewForm.get('review_text')?.invalid && reviewForm.get('review_text')?.touched) {
+      <small class="form-error">Введите текст отзыва</small>
+    }
+    <div class="flex justify-end gap-2">
+      <p-button label="Отмена" severity="secondary" type="button" (click)="reviewDialogVisible = false" />
+      <p-button label="Отправить" type="submit" />
+    </div>
+  </form>
+</p-dialog>
